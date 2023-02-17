@@ -1,0 +1,92 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2022 The Foundry Visionmongers Ltd
+#
+# yaml-language-server: $schema=https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.1/schema.json
+# yamllint disable-line rule:document-start
+openapi: 3.0.0
+
+info:
+  title: An OpenAPI description of the OpenAssetIO ManagerInterface
+  version: 1.0.0-alpha.1
+
+paths:
+  /manager/identifier:
+    get:
+      summary: A string that uniquely identifies the manager.
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: string
+  /manager/displayName:
+    get:
+      summary: A human friendly display label for the manager.
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: string
+  /manager/info:
+    post:
+      summary: Retrieves information about the current state.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                host:
+                  $ref: "#/components/schemas/host"
+                  required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  log:
+                    $ref: "#/components/schemas/log"
+                  value:
+                    type: object
+                    properties:
+                      entityReferencesMatchPrefix:
+                        type: string
+                        description: |
+                          A prefix that is always present in entity
+                          references for this manager. It is used to
+                          optimize isEntityReference to avoid a round-trip
+                          to the back-end server.
+
+components:
+  schemas:
+    host:
+      type: object
+      properties:
+        identifier:
+          type: string
+        displayName:
+          type: string
+    log:
+      type: array
+      items:
+        type: object
+        properties:
+          severity:
+            type: string
+            enum:
+              - debugApi
+              - debug
+              - info
+              - progress
+              - warning
+              - error
+              - critical
+          message:
+            type: string
